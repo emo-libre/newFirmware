@@ -1,0 +1,11 @@
+## LED Driver ELF App Dependencies
+## This app builds as an ELF file that runs on base-firmware
+
+dependencies:
+  # ELF loader for building as ELF app
+
+  # CMake utilities for ELF building
+  espressif/cmake_utilities: ^0.5.0
+
+  # LED output drivers can be added later if needed
+  espressif/elf_loader: ^1.3.1

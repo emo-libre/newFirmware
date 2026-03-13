@@ -1,0 +1,16 @@
+How to backup:
+change the port from COMx to the esp32 COM port, if you desire to download the .bin to another destination change the path, I suggest to download the file at least 5 times
+
+esptool.py --chip esp32 -p COM25 -b 115200 read_flash 0x0 0x1000000 "$env:USERPROFILE\Desktop\esp32_full_16MB.bin"
+
+
+How to restore:
+change the port from COMx to the esp32 COM port, this will rewrite the entire ROM
+
+esptool.py --chip esp32 -p COM11 -b 460800 write_flash --flash_mode keep --flash_freq keep --flash_size keep 0x0 "$env:USERPROFILE\Desktop\esp32_full_16MB.bin"
+
+
+How to flash a custom firmware:
+change the port from COMx to the esp32 COM port and ensure execute the command in the root of the project
+
+esptool.py --chip esp32 -p COMx -b 115200 write_flash --flash_mode dio --flash_freq 40m --flash_size 16MB 0x20000 .\build\emo_firmware.bin
