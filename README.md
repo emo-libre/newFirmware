@@ -82,6 +82,18 @@ If you only want to replace the application in `ota_0`, flash the app binary at
 esptool.py --chip esp32 -p COMx -b 115200 write_flash --flash_mode dio --flash_freq 40m --flash_size 16MB 0x20000 .\build\emo_firmware.bin
 ```
 
+After `base-firmware.bin` is flashed, connect to the ESP32 hotspot and set a
+Wi-Fi network. Once that is done, you can access the web page via
+`node-manager.local`.
+
+## Install Apps From The UI
+
+To flash apps, open the Apps Manager in the web UI and select the app you want
+to install.
+
+If the app you are installing is a test app, remember to remove the auto-start
+check before installing it.
+
 ## Safety Notes
 
 - Double-check the COM port before writing.
