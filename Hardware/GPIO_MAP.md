@@ -17,6 +17,8 @@ cross-verified with UART scan on physical hardware (2026-03-22).
 | **23** | OUT | Battery / Power circuit enable | GPIO | HIGH = system powered on |
 | **25** | OUT | Right Legs servo   | RMT custom | Smart servo signal |
 | **26** | OUT | Right Foot servo   | RMT custom | Smart servo signal |
+| **0**  | I/O | IMU SDA            | I2C | Confirmed by ESP32 brute-force scan 2026-04-03 |
+| **19** | I/O | IMU SCL            | I2C | Confirmed by ESP32 brute-force scan 2026-04-03 |
 
 ---
 
@@ -46,11 +48,17 @@ cross-verified with UART scan on physical hardware (2026-03-22).
    └──────────────┘     │                                     │
                         │  GPIO23 ──────────────────────────► │─────────────────────┐
                         │         HIGH = on                   │                     │
-                        └─────────────────────────────────────┘            ┌────────┴───────┐
-                                                                           │    Battery /   │
-                                                                           │  Power circuit │
-                                                                           │  (PWR_EN pin)  │
-                                                                           └────────────────┘
+                        │                                     │            ┌────────┴───────┐
+                        │  GPIO0  ◄────────────────────────── │            │    Battery /   │
+                        │  GPIO19 ◄────────────────────────── │            │  Power circuit │
+                        │         I2C (SDA/SCL)               │            │  (PWR_EN pin)  │
+                        └─────────────────────────────────────┘            └────────────────┘
+                                          │
+                                 ┌────────┴────────┐
+                                 │   IMU (0x28)    │
+                                 │  BNO055 /       │
+                                 │  QMA6100P       │
+                                 └─────────────────┘
 ```
 
 ---
@@ -119,7 +127,32 @@ raw = (degree × 4 + 1380) / 3
 7.  GPIO23 HIGH  ← battery/power circuit enable
 
 
+## IMU Details
+
+| Parameter | Value |
+|-----------|-------|
+| SDA | **GPIO 0** |
+| SCL | **GPIO 19** |
+| I2C address | **0x28** (7-bit) |
+| Likely IC | BNO055 (default addr 0x28/0x29) or QMA6100P |
+
+Firmware strings: `IMU I2C ID = 0x%x`, task `i2c_sensor_process`, `i2c_sensor`.
+
+---
+
 ## Notes
 
 - **GPIO 23** controls a **battery/power management circuit** Also shared with I2S WS (audio mode 0); audio and power sequencing run in separate contexts.
 - **GPIO 25 / 26** are shared between Right Legs/Foot servos and I2S BCK (audio mode 0/1). Same multiplexing applies.
+
+
+
+
+
+#define EMO_K210_SPI_HOST_NAME   "SPI2/HSPI"
+#define EMO_K210_SPI_MODE        1
+#define EMO_K210_SPI_CLOCK_HZ    8000000
+#define EMO_K210_SPI_MOSI_GPIO   15
+#define EMO_K210_SPI_MISO_GPIO   2
+#define EMO_K210_SPI_SCLK_GPIO   14
+#define EMO_K210_SPI_CS_GPIO     13
